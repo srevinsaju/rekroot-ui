@@ -61,3 +61,11 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+
+.bg-login-image {
+  background-image: url("/login-tall-getrekt.png");
+  background-size: cover;
+  background-position: center;
+}
+
