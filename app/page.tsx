@@ -2,6 +2,14 @@ import Link from "next/link"
 
 import { siteConfig } from "@/config/site"
 import { buttonVariants } from "@/components/ui/button"
+import { Metadata } from "next"
+
+
+export const metadata: Metadata = {
+  title: "Rekroot - Simple open source HR solution",
+  description: "Your All-in-One Solution for Effortless Job Postings and Seamless Application Management. Say goodbye to the hassle of traditional hiring processes and embrace the power of Rekroot. Empowering HR professionals, one hire at a time.",
+}
+
 
 export default function IndexPage() {
   return (
@@ -18,7 +26,7 @@ export default function IndexPage() {
       </div>
       <div className="flex gap-4">
         <Link
-          href="/login"
+          href="/register"
           rel="noreferrer"
           className={buttonVariants()}
         >

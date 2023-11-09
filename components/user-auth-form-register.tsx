@@ -19,7 +19,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation"
+import { useRouter } from "next/router"
+
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -31,29 +33,44 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
   const [alertTitle, setAlertTitle] = React.useState("");
   const [alertDescription, setAlertDescription] = React.useState("");
+  const [success, setSuccess] = React.useState<boolean>(false);
 
+  async function onSubmit(event: React.SyntheticEvent) {
 
-async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
     setIsLoading(true)
     let url = process.env.NEXT_PUBLIC_BACKEND_URL
     try {
-      let result = await axios.post(`${url}/sign-in`, {
+      let result = await axios.post(`${url}/sign-up`, {
         email: email, 
         password: password,
       })
       console.log(result)
-      localStorage.setItem("token", result.data.token)
-      document.location.href = "/dashboard"
+      setAlertTitle("You are in! 🤟")
+      setAlertDescription("Congratulations! You're now a part of the Rekroot community. Your account has been successfully created, unlocking a world of effortless hiring. Dive in and start streamlining your job postings and applications with Rekroot's intuitive features. Happy recruiting!")
+      setSuccess(true);
     } catch (err: any) {
       setAlertTitle(err.response.data.message)
       setAlertDescription(err.response.data?.description || `That's all we know.`)
-      setAlertVisible(true);
       console.log(err.response.data.message)
     }
 
+    setAlertVisible(true);
     setIsLoading(false)
+
+    
+    
   }
+
+  async function alertButtonCallback() {
+    console.log("cancel callback")
+    if (success) {
+      console.log("account creation successful.")
+      document.location.href = "/login"
+    }
+  }
+
+  
 
   return (
     <AlertDialog open={alertVisible}  onOpenChange={setAlertVisible}>
@@ -95,7 +112,7 @@ async function onSubmit(event: React.SyntheticEvent) {
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign In with Email
+            Sign Up with Email
           </Button>
         </div>
       </form>
@@ -125,7 +142,7 @@ async function onSubmit(event: React.SyntheticEvent) {
         {alertDescription}
       </AlertDialogDescription>
     </AlertDialogHeader>
-    <AlertDialogCancel>Ok</AlertDialogCancel>
+    <AlertDialogCancel onClick={alertButtonCallback}>Ok</AlertDialogCancel>
     </AlertDialogContent>
     </AlertDialog>
   )
