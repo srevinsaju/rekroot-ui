@@ -44,6 +44,7 @@ async function onSubmit(event: React.SyntheticEvent) {
       })
       console.log(result)
       localStorage.setItem("token", result.data.token)
+      
       document.location.href = "/dashboard"
     } catch (err: any) {
       setAlertTitle(err.response.data.message)

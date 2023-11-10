@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link"
 
 import { siteConfig } from "@/config/site"
@@ -5,6 +6,11 @@ import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { UserNav } from "./user-nav"
+
+function UserBlock() {
+  return <UserNav />
+}
 
 export function SiteHeader() {
   return (
@@ -30,6 +36,7 @@ export function SiteHeader() {
             </Link>
             
             <ThemeToggle />
+            <UserBlock />
           </nav>
         </div>
       </div>

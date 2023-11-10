@@ -1,11 +1,15 @@
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Plus } from "lucide-react";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "Dashboard - Rekroot",
     description: "Get rekt.",
-  }
-  
+}
+
+
 
 function Ghost() {
     return <div className="flex items-center space-x-4">
@@ -17,6 +21,7 @@ function Ghost() {
     </div>
 }
 
+
 export default function Dashboard() {
     return <>
     
@@ -25,6 +30,12 @@ export default function Dashboard() {
         <div className="py-4">
             <Ghost></Ghost>
         </div>
+        <Link href="/job/application">
+            <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Application
+            </Button>
+        </Link>
     </div>
     </>
 }
