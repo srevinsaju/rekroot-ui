@@ -7,9 +7,19 @@ import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { UserNav } from "./user-nav"
+import { useEffect } from "react";
 
 function UserBlock() {
-  return <UserNav />
+  let loggedIn = false
+  useEffect( () => {
+  if ( window.sessionStorage.getItem("token")) {
+    loggedIn
+  }})
+  if (loggedIn) {
+    return <UserNav />
+  }
+
+  return <></>
 }
 
 export function SiteHeader() {

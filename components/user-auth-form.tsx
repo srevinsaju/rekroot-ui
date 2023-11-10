@@ -43,7 +43,7 @@ async function onSubmit(event: React.SyntheticEvent) {
         password: password,
       })
       console.log(result)
-      localStorage.setItem("token", result.data.token)
+      window.sessionStorage.setItem("token", result.data.token)
       
       document.location.href = "/dashboard"
     } catch (err: any) {

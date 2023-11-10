@@ -1,3 +1,4 @@
+"use client";
 import {
     Avatar,
     AvatarFallback,
@@ -14,6 +15,7 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+import { useEffect } from "react";
   
   export function UserNav() {
     return (
@@ -54,7 +56,7 @@ import {
             <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => {localStorage.clear(); document.location.href = "/"}}>
+          <DropdownMenuItem onClick={() => { window.sessionStorage.clear(); document.location.href = "/" }}>
             Log out
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>

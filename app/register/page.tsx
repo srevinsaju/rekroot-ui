@@ -1,3 +1,4 @@
+"use client"; 
 import { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
@@ -6,10 +7,10 @@ import { cn } from "@/lib/utils"
 import { UserAuthForm } from "@/components/user-auth-form-register"
 import { useState } from "react"
 
-export const metadata: Metadata = {
-  title: "Register - Rekroot",
-  description: "Create a new account and start rekrooting.",
-}
+// export const metadata: Metadata = {
+//  title: "Register - Rekroot",
+//  description: "Create a new account and start rekrooting.",
+//}
 
 
 
