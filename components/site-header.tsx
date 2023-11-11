@@ -7,13 +7,14 @@ import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { UserNav } from "./user-nav"
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 function UserBlock() {
   let loggedIn = false
   useEffect( () => {
   if ( window.sessionStorage.getItem("token")) {
-    loggedIn
+    console.log("login status check: ", true)
+    loggedIn = true
   }})
   if (loggedIn) {
     return <UserNav />
@@ -23,6 +24,17 @@ function UserBlock() {
 }
 
 export function SiteHeader() {
+  const [loggedIn, setLoggedIn] = React.useState<boolean>(false);
+
+  let userBlock: React.ReactNode = <UserNav />
+
+  useEffect( () => {
+    if ( window.sessionStorage.getItem("token")) {
+      setLoggedIn(true)
+    }
+  })
+  
+
   return (
     <header className="bg-background sticky top-0 z-40 w-full border-b">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
@@ -46,7 +58,7 @@ export function SiteHeader() {
             </Link>
             
             <ThemeToggle />
-            <UserBlock />
+            {loggedIn ? userBlock: <></>}
           </nav>
         </div>
       </div>

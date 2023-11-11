@@ -32,32 +32,51 @@ import {
   } from "@/components/ui/alert-dialog"
  
 const formSchema = z.object({
-  username: z.string().min(2, {
+  fullname: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(8, { message: "Password must be atleast 8 characters" }),
+  username: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(4, { message: "Password must be atleast 8 characters" }),
   phoneNumber: z.string().min(8, { message: "Invalid phone number, expecting atleast 8 characters"}),
   address: z.string(),
   linkedin: z.string(),
 })
  
 export function ProfileForm() {
-const [alertVisible, setAlertVisible] = React.useState<boolean>(false);
-const [alertTitle, setAlertTitle] = React.useState("");
-const [alertDescription, setAlertDescription] = React.useState("");
+  const [alertVisible, setAlertVisible] = React.useState<boolean>(false);
+  const [alertTitle, setAlertTitle] = React.useState("");
+  const [alertDescription, setAlertDescription] = React.useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   // 1. Define your form.
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      linkedin: "",
-      address: "",
-      phoneNumber: "",
-    },
+    defaultValues: async () => {
+      let email = "loading..."
+      let name = "Loading..."
+      let url = process.env.NEXT_PUBLIC_BACKEND_URL
+      let token = window.sessionStorage.getItem("token")
+      try {
+        let result = await axios.get(`${url}/me`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        })
+        email = result.data.email
+        name = result.data.fullName || result.data.email.split("@")[0]
+        console.log(result)
+      } catch (err: any) {
+          console.log(err)
+      } 
+      return {
+        fullname: name,
+        username: email,
+        password: "",
+        linkedin: "",
+        address: "",
+        phoneNumber: "",
+      }
+    }
   })
  
   // 2. Define a submit handler.
@@ -66,20 +85,24 @@ const [alertDescription, setAlertDescription] = React.useState("");
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     let url = process.env.NEXT_PUBLIC_BACKEND_URL
+    let token = window.sessionStorage.getItem("token")
     try {
       let result = await axios.post(`${url}/profile-edit`, {
-        email: values.email, 
+        email: values.username, 
         password: values.password,
         phoneNo: values.phoneNumber,
         location: values.address,
         linkedin: values.linkedin,
         fullName: values.username,
-      }, { withCredentials: true })
+        designation: "",
+    }, { headers: {
+      "Authorization": `Bearer ${token}`
+    }})
       console.log(result)
       redirect("/dashboard")
     } catch (err: any) {
         console.log(err)
-        setAlertTitle(err?.response?.title || "Something went wrong.")
+        setAlertTitle(err?.response?.message || "Something went wrong.")
         setAlertDescription(err?.response?.description || "That's all we know.")
         setAlertVisible(true)
     }
@@ -93,7 +116,7 @@ const [alertDescription, setAlertDescription] = React.useState("");
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="fullname"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Full Name</FormLabel>
@@ -110,7 +133,7 @@ const [alertDescription, setAlertDescription] = React.useState("");
 
         <FormField
           control={form.control}
-          name="email"
+          name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>

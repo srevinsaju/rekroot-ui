@@ -15,9 +15,36 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-import { useEffect } from "react";
+import axios from "axios";
+import { redirect } from "next/navigation";
+import React, { useEffect } from "react";
   
-  export function UserNav() {
+
+export function UserNav() {
+
+    const [profileEmail, setProfileEmail] = React.useState<string>("nobody@nobody");
+    const [profileName, setProfileName] = React.useState<string>("Unauthorized");
+    useEffect(() => {
+      const f = async () => {
+        let url = process.env.NEXT_PUBLIC_BACKEND_URL
+        let token = window.sessionStorage.getItem("token")
+        try {
+          let result = await axios.get(`${url}/me`, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          })
+          setProfileEmail(result.data.email)
+          setProfileName(result.data.fullName || result.data.email.split("@")[0])
+          console.log(result)
+        } catch (err: any) {
+            console.log(err)
+        }
+      }
+      f()
+    }, [])
+
+
     return (
       <>
       <div>
@@ -25,7 +52,7 @@ import { useEffect } from "react";
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
-              <AvatarImage src="https://github.com/srevinsaju.png" alt="@srevinsaju" />
+              <AvatarImage src="https://github.com/srevinsaju.png" alt={profileEmail} />
               <AvatarFallback>SC</AvatarFallback>
             </Avatar>
           </Button>
@@ -33,9 +60,9 @@ import { useEffect } from "react";
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">srevinsaju</p>
+              <p className="text-sm font-medium leading-none">{profileName}</p>
               <p className="text-xs leading-none text-muted-foreground">
-                srevin@rekroot.io
+                {profileEmail}
               </p>
             </div>
           </DropdownMenuLabel>
