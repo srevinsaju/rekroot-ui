@@ -9,8 +9,46 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { useEffect } from "react";
+import { useForm } from "react-hook-form"
+import React, { useEffect } from "react";
 
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog"
+
+import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Icons } from "@/components/icons";
+import axios from "axios";
+ 
+const companyCreateFormSchema = z.object({
+    name: z.string().min(3).max(255),
+    website: z.string().url(),
+    address: z.object({
+        street: z.string().min(3).max(255),
+        city: z.string().min(3).max(255),
+        pincode: z.string().min(3).max(255),
+    }),
+    support_email: z.string().email(),
+})
 
 
 function Ghost() {
@@ -35,7 +73,44 @@ function Recruiter() {
 
 
 function CreateCompany() {
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [alertVisible, setAlertVisible] = React.useState<boolean>(false);
+    const [alertTitle, setAlertTitle] = React.useState("");
+    const [alertDescription, setAlertDescription] = React.useState("");
+
+    const form = useForm<z.infer<typeof companyCreateFormSchema>>({
+        resolver: zodResolver(companyCreateFormSchema),
+        defaultValues: {
+        },
+      })
+  
+
+    async function onSubmit(values: z.infer<typeof companyCreateFormSchema>) {
+        setIsLoading(true);
+        console.log(values)
+
+        // Do something with the form values.
+        // ✅ This will be type-safe and validated.
+        let url = process.env.NEXT_PUBLIC_BACKEND_URL
+        let token = window.sessionStorage.getItem("token")
+        try {
+        let result = await axios.post(`${url}/company`, values, { 
+            headers: {
+                 "Authorization": `Bearer ${token}`
+            }
+        })
+        console.log(result)
+        redirect("/my/companies")
+        } catch (err: any) {
+            console.log(err)
+            setAlertTitle(err?.response?.message || "Something went wrong.")
+            setAlertDescription(err?.response?.description || "That's all we know.")
+            setAlertVisible(true)
+        }
+        setIsLoading(false);
+    }
     return (
+        <AlertDialog open={alertVisible}  onOpenChange={setAlertVisible}>
         <Dialog>
             <DialogTrigger asChild>
                 
@@ -44,7 +119,7 @@ function CreateCompany() {
                     Join
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[800px]">
                 <DialogHeader>
                 <DialogTitle className="text-2xl">Create a company</DialogTitle>
                 <DialogDescription>
@@ -52,39 +127,134 @@ function CreateCompany() {
                 By providing essential company information, you&apos;re unlocking a world of streamlined recruitment. 
                 Enjoy intuitive tools, effortless management, and find your ideal candidates effortlessly. 
                 Let&apos;s build your recruitment success together!
-
+<br></br> 
                     Fill in the details below to get started.
                 </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                    Company Name
-                    </Label>
-                    <Input
-                    id="name"
-                    className="col-span-3"
-                    />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="username" className="text-right">
-                    Support Email
-                    </Label>
-                    <Input
-                    id="email"
-                    type="email"
-                    className="col-span-3"
-                    />
-                </div>
-                </div>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <FormField control={form.control} name="name" 
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Company Name</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Company Name" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                                This is the public name of your company.
+                            </FormDescription>
+                            <FormMessage />
+                            </FormItem>
+                        )} />
 
-                <DialogFooter>
-                    <p className="text-foreground-muted text-xs">By continuing, you agree to rekroot&apos;s terms and conditions.</p>
-                    <Button type="submit">Join</Button>
-                </DialogFooter>
+                        <div className="flex flex-row space-x-4">
+                        <FormField control={form.control} name="website" 
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Website</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Website" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                                This website will be displayed on your company&apos;s profile.
+                            </FormDescription>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        <FormField control={form.control} name="support_email"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Support Email</FormLabel>
+                            <FormControl>
+                                <Input placeholder="company@acme.sh"  type="email" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                                Required for communication from rekroot team and candidates.
+                            </FormDescription>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        </div>
+                        <div className="flex flex-row space-x-4">
+                        <FormField control={form.control} name="address.street" 
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Street</FormLabel>
+                            <FormControl>
+                                <Input className="w-full" placeholder="Street" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+
+                        <FormField control={form.control} name="address.city"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>City</FormLabel>
+                            <FormControl>
+                                <Input placeholder="City" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        <FormField control={form.control} name="address.pincode"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Pincode</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Pincode" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                            </div>
+                        
+                        
+                        {/* <FormField control={form.control} name="logo"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Logo</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Logo" type="file" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        /> */}
+                        <DialogFooter>
+                            <div className="text-right">
+                            <p className="text-foreground-muted text-xs">By continuing, you agree to rekroot&apos;s terms and conditions.</p>
+                            
+                            <Button type="submit" className="mt-2" >
+                                {isLoading ? (
+                                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                                ) : ("")}{" "}
+                                
+                                Join</Button>
+                            </div>
+                        </DialogFooter>
+                    </form>
+                </Form>
+
+                
             </DialogContent>
         </Dialog>
-    )
+        <AlertDialogContent>
+        <AlertDialogHeader>
+            <AlertDialogTitle>{alertTitle}</AlertDialogTitle>
+            <AlertDialogDescription>
+            {alertDescription}
+            </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogCancel>Ok</AlertDialogCancel>
+        </AlertDialogContent>
+        </AlertDialog>
+)
 }
 
 export default function Dashboard() {
