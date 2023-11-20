@@ -24,6 +24,7 @@ export function UserNav() {
 
     const [profileEmail, setProfileEmail] = React.useState<string>("nobody@nobody");
     const [profileName, setProfileName] = React.useState<string>("Unauthorized");
+    const [profileImage, setProfileImage] = React.useState<string>("");
     useEffect(() => {
       const f = async () => {
         let url = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -36,6 +37,7 @@ export function UserNav() {
           })
           setProfileEmail(result.data.email)
           setProfileName(result.data.fullName || result.data.email.split("@")[0])
+          setProfileImage(result.data.image);
           console.log(result)
         } catch (err: any) {
             console.log(err)
@@ -52,8 +54,8 @@ export function UserNav() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
-              <AvatarImage src="https://github.com/srevinsaju.png" alt={profileEmail} />
-              <AvatarFallback>SC</AvatarFallback>
+              <AvatarImage src={profileImage} alt={profileEmail} />
+              <AvatarFallback>{profileName.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
