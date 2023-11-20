@@ -1,12 +1,12 @@
 "use client";
-import { RecentApplications } from "@/components/recent-applications";
+import { ApplicationStatus, RecentApplications } from "@/components/recent-applications";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus } from "lucide-react";
+import { Eye, Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form"
@@ -298,8 +298,14 @@ export default function Dashboard() {
                 Join now to access powerful tools and streamline your recruitment process effortlessly.
                 </p>
                 
+                <div className="flex gap-2">
                 <CreateCompany ></CreateCompany>
-                
+                <Link href="/my/companies">
+                <Button className="" variant="secondary">
+                    <Eye className="w-4 h-4 mr-2"></Eye>
+                     View</Button>
+                     </Link>
+                </div>
                 </CardContent>
             </Card>
             <Card>
@@ -383,6 +389,60 @@ export default function Dashboard() {
         <RecentApplications />
         </CardContent>
         </Card>
+
+        <div className="space-y-4">
+            <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="font-medium text-sm">
+                        Companies
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mb-4">Apply to top companies with rekroot</p>
+            </CardHeader>
+            <CardContent className="pt-4">
+                <div className="flex gap-2">
+                <Link href="/companies">
+                    <Button>
+                        <Eye className="mr-2 h-4 w-4" />
+                         View all companies</Button>
+
+                </Link>
+                <Link href="/my/companies">
+                    <Button variant="secondary">
+                        <Eye className="mr-2 h-4 w-4" />
+                         View your companies</Button>
+                </Link>
+                </div>
+            </CardContent>
+            </Card>
+            <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="font-medium text-sm">
+                        Applications
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mb-4">See your current job applications</p>
+            </CardHeader>
+            <CardContent className="pt-4">
+            <div className="flex gap-2 mb-6">
+                <Link href="/my/postings">
+                    <Button variant="secondary">
+                        <Eye className="mr-2 h-4 w-4" />
+                         View your postings</Button>
+
+                </Link>
+                <Link href="/my/applications">
+                    <Button variant="secondary">
+                        <Eye className="mr-2 h-4 w-4" />
+                         View your applications</Button>
+                </Link>
+                </div>
+
+                <div>
+                    <ApplicationStatus/>
+                </div>
+
+            </CardContent>
+            </Card>
+        </div>
         </div>
 
     </div>

@@ -29,10 +29,33 @@ function Event({ name, company, position, timestamp} : { name: string, company: 
   </div>
 }
 
+function Posting({ name, company, position, timestamp} : { name: string, company: string, position: string, timestamp: number}) {
+  return <div className="flex ">
+
+  <div className="space-y-1">
+    <p className="text-sm font-medium leading-none">{position}</p>
+    <p className="text-sm ">{company}</p>
+    <p className="text-sm text-muted-foreground">
+      Status pending. <span className="italic">Last Updated {moment.unix(timestamp).fromNow()}</span>
+    </p>
+    <p className="text-xs">{moment.unix(timestamp).fromNow()}</p>
+    <div>
+    <Button size="sm" className="mt-2 mr-2">Apply</Button>
+    <Button size="sm" variant="outline" className="mt-2 mr-2">View</Button>
+    <Button size="sm" variant="outline" className="mt-2">
+      <Share className="mr-2 h-3 w-3"></Share>
+      Share
+      </Button>
+    </div>
+  </div>
+</div>
+}
+
+
 export function RecentApplications() {
     let happenings: React.ReactElement[] = [];
     let people = [{ name: 'Emma Johnson', company: 'Tech Innovators', position: 'Software Engineer', timestamp: 1699644905 }, // Timestamp for 2023-03-08 00:00:00 UTC
-    { name: 'Daniel Smith', company: 'Data Solutions Ltd.', position: 'Data Analyst', timestamp: 1699202105 }, // Timestamp for 2023-03-09 00:00:00 UTC
+    { name: 'Daniel Smith', company: 'Data Solutions Ltd.', position: 'Data Analyst', timestamp: 1699212105 }, // Timestamp for 2023-03-09 00:00:00 UTC
     { name: 'Sophia Lee', company: 'Cloud Dynamics', position: 'Systems Architect', timestamp: 1698856505 }, // Timestamp for 2023-03-10 00:00:00 UTC
     { name: 'James Miller', company: 'AI Innovations', position: 'Machine Learning Specialist', timestamp: 1698597305 }, // Timestamp for 2023-03-11 00:00:00 UTC
     { name: 'Olivia Davis', company: 'Cyber Security Solutions', position: 'Security Analyst', timestamp: 1698165305 } // Timestamp for 2023-03-12 00:00:00 UTC
@@ -51,4 +74,25 @@ export function RecentApplications() {
         </div>
       )
     
+}
+
+export function ApplicationStatus() {
+  let happenings: React.ReactElement[] = [];
+  let people = [{ name: 'Emma Johnson', company: 'Cyber Security Solutions', position: 'Software Engineer', timestamp: 1699644905 }, // Timestamp for 2023-03-08 00:00:00 UTC
+  { name: 'Daniel Smith', company: 'AI Innovations.', position: 'Data Analyst', timestamp: 1699202105 }, // Timestamp for 2023-03-09 00:00:00 UTC
+    ]
+
+  people.forEach( (v, i) => {
+      happenings.push(
+          <Posting key={v.name} name={v.name} company={v.company} position={v.position} timestamp={v.timestamp}></Posting>
+      )
+  })
+
+
+  return (
+      <div className="space-y-8">
+        {happenings}
+      </div>
+    )
+  
 }
