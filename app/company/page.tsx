@@ -16,8 +16,7 @@ import {
   } from "@/components/ui/alert-dialog"
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Edit, Eye, Plus } from 'lucide-react';
-import Link from 'next/link';
+import { Edit, Eye } from 'lucide-react';
 
 export default function Companies() {
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -36,7 +35,7 @@ export default function Companies() {
         let url = process.env.NEXT_PUBLIC_BACKEND_URL
         let token = window.sessionStorage.getItem("token")
         try {
-            let result = await axios.get(`${url}/me/companies`, { 
+            let result = await axios.get(`${url}/company`, { 
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
@@ -82,12 +81,7 @@ export default function Companies() {
                 </div>
                 <div className="space-x-2">
                 <Button className="mt-2"><Edit className="w-4 h-4 mr-2"></Edit> Edit</Button>
-                <Link href={`/company/${c._id}`}>
-                <Button variant="secondary"  className="mt-2"><Eye className="w-4 h-4 mr-2"></Eye> View</Button>
-                </Link>
-
-                <Button variant="secondary" className="mt-2"><Plus className="w-4 h-4 mr-2"></Plus> Create Application</Button>
-
+                <Button  variant={'secondary'} className="mt-2"><Eye className="w-4 h-4 mr-2"></Eye> View</Button>
                 </div>
             </div>
         </div>
@@ -128,10 +122,10 @@ export default function Companies() {
         
     
     return <div className="p-4 my-16 max-w-5xl mx-auto">
-         <h1 className="text-4xl font-bold">My Companies</h1>
+         <h1 className="text-4xl font-bold">Companies</h1>
         
         <div className="flex justify-between items-center">
-            <p className="text-lg text-gray-500">Here are all the companies you have created.</p>
+            <p className="text-lg text-gray-500">Start your career with these companies.</p>
         </div>
 
         <div className='mt-4'>
