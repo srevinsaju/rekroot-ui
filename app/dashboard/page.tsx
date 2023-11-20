@@ -40,8 +40,8 @@ import { Icons } from "@/components/icons";
 import axios from "axios";
  
 const companyCreateFormSchema = z.object({
-    name: z.string().min(3).max(255),
-    website: z.string().url(),
+    companyName: z.string().min(3).max(255),
+    companyWebsite: z.string().url(),
     address: z.object({
         street: z.string().min(3).max(255),
         city: z.string().min(3).max(255),
@@ -86,6 +86,7 @@ function CreateCompany() {
   
 
     async function onSubmit(values: z.infer<typeof companyCreateFormSchema>) {
+
         setIsLoading(true);
         console.log(values)
 
@@ -100,7 +101,7 @@ function CreateCompany() {
             }
         })
         console.log(result)
-        redirect("/my/companies")
+        window.location.href = "/my/companies"
         } catch (err: any) {
             console.log(err)
             setAlertTitle(err?.response?.message || "Something went wrong.")
@@ -133,7 +134,7 @@ function CreateCompany() {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <FormField control={form.control} name="name" 
+                        <FormField control={form.control} name="companyName" 
                         render={({ field }) => (
                             <FormItem>
                             <FormLabel>Company Name</FormLabel>
@@ -148,7 +149,7 @@ function CreateCompany() {
                         )} />
 
                         <div className="flex flex-row space-x-4">
-                        <FormField control={form.control} name="website" 
+                        <FormField control={form.control} name="companyWebsite" 
                         render={({ field }) => (
                             <FormItem>
                             <FormLabel>Website</FormLabel>
