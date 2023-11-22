@@ -334,7 +334,7 @@ export default function Dashboard() {
                 </p>
                 
                 
-                <Link href="/job/application" className="mt-4">
+                <Link href="/my/companies" className="mt-4">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         Job Posting
@@ -367,7 +367,7 @@ export default function Dashboard() {
                 </p>
                 
                 
-                <Link href="/job/application" className="mt-4">
+                <Link href="/companies" className="mt-4">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         Apply

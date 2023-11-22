@@ -17,6 +17,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Edit, Eye } from 'lucide-react';
+import Link from 'next/link';
+import { Company } from '@/components/company-small-block';
 
 export default function Companies() {
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -40,20 +42,8 @@ export default function Companies() {
                     "Authorization": `Bearer ${token}`
                 }
             })
-            console.log(result.data.companyUUIDs)
-            let datas = [];
-            for (let i = 0; i < result.data.companyUUIDs.length; i++) {
-                
-                let companyID = result.data.companyUUIDs[i];
-                let companyResult = await axios.get(`${url}/company/${companyID}`, { 
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                })
-                console.log("company:", companyResult.data.company);
-                datas.push(companyResult.data.company);
-            }
-            setCompanies(datas)
+            console.log("received companies: ", result.data)
+            setCompanies(result.data)
             console.log("Loaded all companies data.")
             
         } catch (err: any) {
@@ -67,53 +57,46 @@ export default function Companies() {
     }
 
 
-    function Company(company: any) {
-        console.log("received company:", company.company)
-        let c = company.company;
-        return <div className='flex gap-4'>
-            <div className=''>
-                <img src="https://via.placeholder.com/150" className='h-32 w-32 object-cover rounded-lg'/>
-            </div>
-            <div className='grid'>
-                <div>
-                    <h1 className='text-2xl font-bold'>{c.companyName}</h1>
-                    <p className='text-gray-500'>{c.companyWebsite}</p>
-                </div>
-                <div className="space-x-2">
-                <Button className="mt-2"><Edit className="w-4 h-4 mr-2"></Edit> Edit</Button>
-                <Button  variant={'secondary'} className="mt-2"><Eye className="w-4 h-4 mr-2"></Eye> View</Button>
-                </div>
-            </div>
-        </div>
-    }
-
     function CompanyList() {
         let companyComponents: React.ReactNode[] = [];
+        console.log("companies:", companies);
 
         companies.every((company) => {
-            companyComponents.push(<Company company={company}/>)
+            console.log("checking company:", company)
+            companyComponents.push(<Company key={company._id} company={company} showCreatePosting={false} showView={true} showEdit={false}/>)
+            return true;
         })
         return <>
             {companyComponents}
         </>;
     }
 
+
+    function LoadingSkeletonSingleton() {
+        return <div className='flex gap-4 mt-4'>
+            <div className=''>
+
+            <Skeleton className='h-32 w-32'/>
+            </div>
+            <div className='grid spacy-y-2 w-full'>
+
+            <Skeleton className=' h-6'/>
+
+            <Skeleton className=' h-6 w-32'/>
+
+            <Skeleton className=' h-6 w-[50%]'/>
+
+            <Skeleton className=' h-6 w-[90%]'/>
+            </div>
+        </div>
+    }
+
     function LoadingSkeleton() {
-        return             <div className='flex gap-4'>
-        <div className=''>
-
-        <Skeleton className='h-32 w-32'/>
-        </div>
-        <div className=' spacy-y-2 col-span-3 grid items-center '>
-        <Skeleton className=' h-6'/>
-
-        <Skeleton className=' h-6 w-32'/>
-
-        <Skeleton className=' h-6 w-[50%]'/>
-
-        <Skeleton className=' h-6 w-[90%]'/>
-        </div>
-    </div>
+        let skeletons: React.ReactNode[] = [];
+        for (let i = 0; i < 4; i++) {
+            skeletons.push(<LoadingSkeletonSingleton key={i}/>)
+        }        
+        return <>{skeletons}</>
     }
 
     useEffect(() => {

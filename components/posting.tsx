@@ -38,20 +38,16 @@ const formSchema = z.object({
   job_title: z.string().min(5, {
     message: "Job Title must be atleast 5 characters."
   }),
-  location_address_1: z.string(),
-  location_address_2: z.string(),
-  location_city: z.string(),
+
   location_state: z.string(),
   location_country: z.string(),
-  location_pincode: z.string(),
   job_location: z.string(),
-  
   job_type: z.string(),
   description: z.string().min(10, {
     message: "Description should contain atleast 10 characters."
   }),
   salary_range: z.string(),
-  custom_questions: z.map(z.string().min(5, { message: "question key must contain atleast 5 characters" }), z.string(), {})
+  custom_questions: z.map(z.string().min(5, { message: "question key must contain atleast 5 characters" }), z.string(), {}).optional()
 })
  
 function getCountries(lang = 'en') {
@@ -71,7 +67,7 @@ function getCountries(lang = 'en') {
   return countries
 }
 
-export function ProfileForm() {
+export function ProfileForm({company: company}: { company: any}) {
 const [alertVisible, setAlertVisible] = React.useState<boolean>(false);
 const [alertTitle, setAlertTitle] = React.useState("");
 const [alertDescription, setAlertDescription] = React.useState("");
@@ -80,37 +76,42 @@ const [alertDescription, setAlertDescription] = React.useState("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+    
     },
   })
  
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("Hello");
     setIsLoading(true);
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     let url = process.env.NEXT_PUBLIC_BACKEND_URL
     try {
-      let result = await axios.post(`${url}/company/654e52dcd9a5b48d87c77e7f/posting`, {
+      let result = await axios.post(`${url}/company/${company._id}/posting`, {
         job_title: values.job_title,
         description: values.description,
-        job_location: values.job_location,
         location: {
-          address1: values.location_address_1,
-          address2: values.location_address_2,
-          city: values.location_city,
+          // address1: values.location_address_1,
+          // address2: values.location_address_2,
+          // city: values.location_city,
           state: values.location_state,
           country: values.location_country,
-          pincode: values.location_pincode,
+          // pincode: values.location_pincode,
         },
-        job_type: values.job_type,
-        
-      }, { withCredentials: true })
+        job_type: values.job_location,
+        salary_range: values.salary_range,
+      }, {
+        headers: {
+          "Authorization": `Bearer ${window.sessionStorage.getItem("token")}`
+        }
+      })
       console.log(result)
-      redirect("/dashboard")
+      window.location.href = "my/company/" + company._id
     } catch (err: any) {
         console.log(err)
-        setAlertTitle(err?.response?.message || "Something went wrong.")
-        setAlertDescription(err?.response?.description || "That's all we know.")
+        setAlertTitle(err?.response?.data?.message || "Something went wrong.")
+        setAlertDescription(err?.response?.data?.description || "That's all we know.")
         setAlertVisible(true)
     }
     setIsLoading(false);
@@ -145,7 +146,7 @@ const [alertDescription, setAlertDescription] = React.useState("");
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea required placeholder="As a [Your Company Name] [Job Title], you will play a key role in [brief description of responsibilities]. We are looking for a motivated individual with expertise in [required skills], a passion for [relevant industry or technology], and a proven track record in [specific experience]. Join our dynamic team and contribute to [company mission or project]" {...field} />
+                <Textarea required defaultValue={`As a ${company?.companyName || "[Company Name]"} [Job Title], you will play a key role in [brief description of responsibilities]. We are looking for a motivated individual with expertise in [required skills], a passion for [relevant industry or technology], and a proven track record in [specific experience]. Join our dynamic team and contribute to [company mission or project]`} {...field} />
               </FormControl>
               <FormDescription>
                 This description would be shown to company applicants.
@@ -161,9 +162,11 @@ const [alertDescription, setAlertDescription] = React.useState("");
             <FormItem>
               <FormLabel>Job Location</FormLabel>
               <FormControl>
-                <Select required>
+                <Select            disabled={isLoading}
+          onValueChange={field.onChange}
+          {...field}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a job-type" />
+                    <SelectValue placeholder="Select a job-type"/>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -190,9 +193,11 @@ const [alertDescription, setAlertDescription] = React.useState("");
             <FormItem>
               <FormLabel>Job Type</FormLabel>
               <FormControl>
-                <Select required>
+                <Select  disabled={isLoading}
+          onValueChange={field.onChange}
+           {...field}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a job-type" />
+                    <SelectValue placeholder="Select a job-type"/>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -211,59 +216,14 @@ const [alertDescription, setAlertDescription] = React.useState("");
             </FormItem>
           )}
         />
-
-
-        <FormField
-          control={form.control}
-          name="location_address_1"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address Line 1</FormLabel>
-              <FormControl>
-                <Input required type="address" placeholder="Barclay Ave" {...field} />
-              </FormControl>
-              <FormDescription>
-                Password is required.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="location_address_2"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address Line 2</FormLabel>
-              <FormControl>
-                <Input type="address" placeholder="7th Block" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="location_city"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>City</FormLabel>
-              <FormControl>
-                <Input placeholder="Ballpark Ave." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="location_state"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>City</FormLabel>
+              <FormLabel>State</FormLabel>
               <FormControl>
-                <Input placeholder="Ballpark Ave." {...field} />
+                <Input placeholder="State" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -274,27 +234,29 @@ const [alertDescription, setAlertDescription] = React.useState("");
           name="location_country"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>City</FormLabel>
+              <FormLabel>Country</FormLabel>
               <FormControl>
-                <Input placeholder="Ballpark Ave." {...field} />
+                <Input placeholder="Country" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="location_pincode"
+          name="salary_range"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Pincode</FormLabel>
+              <FormLabel>Salary Range</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="01234" {...field} />
+                <Input placeholder="Salary Range" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
 
         <Button type="submit">
         {isLoading ? (

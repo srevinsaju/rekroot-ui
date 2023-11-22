@@ -7,19 +7,6 @@ import { Globe, Mail, Share } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect } from "react"
 
-
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-  } from "@/components/ui/alert-dialog"
-
 export default function Page({ params }: { params: { slug: string } }) {
 
     let [company, setCompany] = React.useState<any>(null);
@@ -27,11 +14,6 @@ export default function Page({ params }: { params: { slug: string } }) {
     let [postings, setPostings] = React.useState<any>(null);
     let [isLoading, setIsLoading] = React.useState<boolean>(true);
     let [isPostingLoading, setIsPostingLoading] = React.useState<boolean>(true);
-
-    const [alertVisible, setAlertVisible] = React.useState<boolean>(false);
-    const [alertTitle, setAlertTitle] = React.useState("");
-    const [alertDescription, setAlertDescription] = React.useState("");
-
     async function getCompany(companyID: String) {
         let url = process.env.NEXT_PUBLIC_BACKEND_URL
         let token = window.sessionStorage.getItem("token")
@@ -49,7 +31,6 @@ export default function Page({ params }: { params: { slug: string } }) {
     
         }
     }
-
     async function getPostings(companyID: String) {
         let url = process.env.NEXT_PUBLIC_BACKEND_URL
         let token = window.sessionStorage.getItem("token")
@@ -62,20 +43,15 @@ export default function Page({ params }: { params: { slug: string } }) {
             console.log("job postings:", companyResult.data.postings);
             setPostings(companyResult.data.postings);
             setIsPostingLoading(false);
-        } catch (err: any) {
-            setAlertTitle(err?.response?.data?.message || "Something went wrong.")
-            setAlertDescription(err?.response?.data?.description || "That's all we know.")
-            setAlertVisible(true)
+        } catch (err) {
             console.log(err)
+    
         }
     }
 
 
     useEffect(() => {
-        Promise.all([
-            getCompany(params.slug),
-            getPostings(params.slug)
-        ])
+        getCompany(params.slug)
     }, [params.slug])
     
 
@@ -129,60 +105,16 @@ export default function Page({ params }: { params: { slug: string } }) {
     }
 
 
-    function Posting({p, company}: {p: any, company: any}) {
-
-        const [isPostingLoading, setIsPostingLoading] = React.useState<boolean>(true);
-        const [posting, setPosting] = React.useState<any>(null);
-
-
-
-
-        React.useEffect(() => {
-
-            async function getPostingMetadata(posting: any) {
-                let url = process.env.NEXT_PUBLIC_BACKEND_URL
-                let token = window.sessionStorage.getItem("token")
-                try {
-                    let companyResult = await axios.get(`${url}/company/${company._id}/posting/${p}`, { 
-                        headers: {
-                            "Authorization": `Bearer ${token}`
-                        }
-                    })
-                    console.log("job postings:", companyResult.data);
-                    setPosting(companyResult.data.jobPosting);
-                    setIsPostingLoading(false);
-                } catch (err) {
-                    console.log(err)
-            
-                }
-            }
-
-            getPostingMetadata(p)
-    
-        }, [p, company._id])
-
-
-        if (isPostingLoading) {
-            return <PostingsLoadingSkeleton/>
-        }
-
-        return <div className='flex gap-4'>
-        <div className=' spacy-y-2 '>
-        <h1 className='text-xl font-bold'>{posting.job_title}</h1>
-        <p className='text-gray-500'>{posting.location.state}, {posting.location.country}</p>
-        <p>{posting.description}</p>
-
-        <Link href={`/company/${company._id}/postings/${posting._id}/apply`}> <Button className="mt-2"> Apply </Button> </Link>
-        </div>
-        </div>
+    function Posting(posting: any) {
+        return <>{posting}</>
     }
 
         
 
-    function Postings({company}: {company: any}) {
+    function Postings() {
         let postingComponents: React.ReactNode[] = [];
         postings.every((posting: any) => {
-            postingComponents.push(<Posting key={posting} p={posting} company={company}/>)
+            postingComponents.push(<Posting posting={posting}/>)
         })
         return <>
             {postingComponents}
@@ -190,8 +122,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     }
 
     
-    return  <AlertDialog open={alertVisible}  onOpenChange={setAlertVisible}>
-        <div className="p-4 my-16 max-w-5xl mx-auto">
+    return <div className="p-4 my-16 max-w-5xl mx-auto">
   
 
         <div className='mt-4'>
@@ -216,24 +147,13 @@ export default function Page({ params }: { params: { slug: string } }) {
         </div>
         <div className='mt-4'>
             <div className="space-y-2">
-            <h2 className='text-2xl font-bold mb-4'>Job Postings</h2>
+            <h2 className='text-2xl font-bold'>Job Postings</h2>
 
             <div className='mt-4'>
-            {isPostingLoading ? <PostingsLoadingSkeleton /> : <Postings company={company}/>}
+            {isPostingLoading ? <PostingsLoadingSkeleton /> : <Postings/>}
         </div>
             </div>
         </div>
         </div>
-
-    <AlertDialogContent>
-    <AlertDialogHeader>
-        <AlertDialogTitle>{alertTitle}</AlertDialogTitle>
-        <AlertDialogDescription>
-        {alertDescription}
-        </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogCancel>Ok</AlertDialogCancel>
-    </AlertDialogContent>
-    </AlertDialog>
 
 }
