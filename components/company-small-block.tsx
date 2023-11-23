@@ -33,7 +33,7 @@ export function Company(
     let c = company;
     return <div className='flex gap-4 mt-4'>
         <div className=''>
-            <img src="https://via.placeholder.com/150" className='h-32 w-32 object-cover rounded-lg'/>
+            <img src="https://source.unsplash.com/140x140/?office" className='h-32 w-32 object-cover rounded-lg'/>
         </div>
         <div className='grid'>
             <div>
