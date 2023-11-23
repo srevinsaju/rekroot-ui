@@ -74,7 +74,7 @@ export default function Companies() {
         let companyComponents: React.ReactNode[] = [];
 
         companies.every((company) => {
-            companyComponents.push(<Company company={company} showEdit={true} showView={true} showCreatePosting={true}/>)
+            companyComponents.push(<Company prefix="/my" company={company} showEdit={true} showView={true} showCreatePosting={true}/>)
         })
         return <>
             {companyComponents}

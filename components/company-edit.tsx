@@ -31,18 +31,36 @@ import {
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
  
+
+  /* {
+  "address": {
+    "street": "Dino Street",
+    "city": "Dino City",
+    "pincode": "4313131"
+  },
+  "_id": "aaaa0739-d87a-42bf-b785-e03a74b7ef69",
+  "companyName": "Dino Company",
+  "companyWebsite": "https://dino.com",
+  "logo": "",
+  "support_email": "dino@dino.com",
+  "createdBy": "3aed5961-4a99-4dcf-8ddc-6002429b7f69",
+  "__v": 0
+}
+*/
 const formSchema = z.object({
-  fullname: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  username: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(4, { message: "Password must be atleast 8 characters" }),
-  phoneNumber: z.string().min(8, { message: "Invalid phone number, expecting atleast 8 characters"}),
-  address: z.string(),
-  linkedin: z.string(),
+    address: z.object({
+        street: z.string(),
+        city: z.string(),
+        pincode: z.string(),
+    }),
+    companyName: z.string(),
+    companyWebsite: z.string().url(),
+    logo: z.string().optional(),
+    support_email: z.string(),
 })
+    
  
-export function ProfileForm() {
+export function CompanyEdit({ company }: { company: string }) {
   const [alertVisible, setAlertVisible] = React.useState<boolean>(false);
   const [alertTitle, setAlertTitle] = React.useState("");
   const [alertDescription, setAlertDescription] = React.useState("");
@@ -57,25 +75,31 @@ export function ProfileForm() {
       let url = process.env.NEXT_PUBLIC_BACKEND_URL
       let token = window.sessionStorage.getItem("token")
       try {
-        let result = await axios.get(`${url}/me`, {
+        let result = await axios.get(`${url}/company/${company}`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
         })
-        email = result.data.email
-        name = result.data.fullName || result.data.email.split("@")[0]
+        
+        // email = result.data.email
+        // name = result.data.fullName || result.data.email.split("@")[0]
         console.log(result)
+        return result.data.company;
       } catch (err: any) {
           console.log(err)
       } 
-      return {
-        fullname: name,
-        username: email,
-        password: "",
-        linkedin: "",
-        address: "",
-        phoneNumber: "",
-      }
+      
+        return {
+            address: {
+                street: "",
+                city: "",
+                pincode: "",
+            },
+            companyName: "",
+            companyWebsite: "",
+            logo: "",
+            support_email: "",
+        }
     }
   })
  
@@ -87,19 +111,11 @@ export function ProfileForm() {
     let url = process.env.NEXT_PUBLIC_BACKEND_URL
     let token = window.sessionStorage.getItem("token")
     try {
-      let result = await axios.post(`${url}/profile-edit`, {
-        email: values.username, 
-        password: values.password,
-        phoneNo: values.phoneNumber,
-        location: values.address,
-        linkedin: values.linkedin,
-        fullName: values.username,
-        designation: "",
-    }, { headers: {
+      let result = await axios.patch(`${url}/company/${company}`, values, { headers: {
       "Authorization": `Bearer ${token}`
     }})
       console.log(result)
-      window.location.href = "/dashboard"
+      window.location.href = "/my/companies"
     } catch (err: any) {
         console.log(err)
         setAlertTitle(err?.response?.message || "Something went wrong.")
@@ -116,15 +132,15 @@ export function ProfileForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="fullname"
+          name="companyName"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Full Name</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input placeholder="ACME Inc." {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                This is the public display name of the company.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -133,15 +149,15 @@ export function ProfileForm() {
 
         <FormField
           control={form.control}
-          name="username"
+          name="companyWebsite"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="johndoe@acme.com" {...field} />
+                <Input type="url" placeholder="acme.com" {...field} />
               </FormControl>
               <FormDescription>
-                This is your email address 
+                This is the company website. 
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -150,28 +166,12 @@ export function ProfileForm() {
 
         <FormField
           control={form.control}
-          name="password"
+          name="support_email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Support email</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
-              </FormControl>
-              <FormDescription>
-                Password is required.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phoneNumber"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mobile Number</FormLabel>
-              <FormControl>
-                <Input placeholder="+91 123456789" {...field} />
+                <Input placeholder="support@acme.com" type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -179,12 +179,12 @@ export function ProfileForm() {
         />
         <FormField
           control={form.control}
-          name="address"
+          name="address.street"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Address</FormLabel>
+              <FormLabel>Street</FormLabel>
               <FormControl>
-                <Input placeholder="Ballpark Ave." {...field} />
+                <Input placeholder="123 Dino Street" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -192,17 +192,33 @@ export function ProfileForm() {
         />
         <FormField
           control={form.control}
-          name="linkedin"
+          name="address.city"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>LinkedIn Profile</FormLabel>
+              <FormLabel>City</FormLabel>
               <FormControl>
-                <Input placeholder="@johndoe" {...field} />
+                <Input placeholder="Dino City" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+
+        />
+
+        <FormField
+          control={form.control}
+          name="address.pincode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Pincode</FormLabel>
+              <FormControl>
+                <Input placeholder="123456" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
 
         <Button type="submit">
         {isLoading ? (
