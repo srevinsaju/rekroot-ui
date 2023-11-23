@@ -16,9 +16,9 @@ import {
   } from "@/components/ui/alert-dialog"
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Edit, Eye } from 'lucide-react';
+import { Edit, Eye, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { Company } from '@/components/company-small-block';
+import { Application } from '@/components/company-small-block';
 
 export default function Companies() {
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -37,14 +37,12 @@ export default function Companies() {
         let url = process.env.NEXT_PUBLIC_BACKEND_URL
         let token = window.sessionStorage.getItem("token")
         try {
-            let result = await axios.get(`${url}/company`, { 
+            let result = await axios.get(`${url}/me/applications`, { 
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
             })
-            console.log("received companies: ", result.data)
-            setCompanies(result.data)
-            console.log("Loaded all companies data.")
+            setCompanies(result.data.applications)
             
         } catch (err: any) {
             console.log(err)
@@ -57,15 +55,24 @@ export default function Companies() {
     }
 
 
+
     function CompanyList() {
+        console.log("companies:", companies)
         let companyComponents: React.ReactNode[] = [];
-        console.log("companies:", companies);
 
         companies.every((company) => {
-            console.log("checking company:", company)
-            companyComponents.push(<Company prefix=""  key={company._id} company={company} showCreatePosting={false} showView={true} showEdit={false}/>)
-            return true;
+            companyComponents.push(<Application application={company} showEdit={false} showView={false} showCreatePosting={false}/>)
         })
+
+        if (companyComponents.length == 0) {
+            return <div className='flex gap-4 mt-4'>
+            <div className='grid'>
+                <div>
+                    <h1 className='text-2xl font-bold'>You have not applied to any companies yet.</h1>
+                </div>
+            </div>
+        </div>
+        }
         return <>
             {companyComponents}
         </>;
@@ -74,10 +81,7 @@ export default function Companies() {
 
     function LoadingSkeletonSingleton() {
         return <div className='flex gap-4 mt-4'>
-            <div className=''>
 
-            <Skeleton className='h-32 w-32'/>
-            </div>
             <div className='grid spacy-y-2 w-full'>
 
             <Skeleton className=' h-6'/>
@@ -105,10 +109,10 @@ export default function Companies() {
         
     
     return <div className="p-4 my-16 max-w-5xl mx-auto">
-         <h1 className="text-4xl font-bold">Companies</h1>
+         <h1 className="text-4xl font-bold">My Applications</h1>
         
         <div className="flex justify-between items-center">
-            <p className="text-lg text-gray-500">Start your career with these companies.</p>
+            <p className="text-lg text-gray-500">All the posts that you have applied so far.</p>
         </div>
 
         <div className='mt-4'>

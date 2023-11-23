@@ -210,7 +210,7 @@ const [workExperience, setWorkExperience] = React.useState<any>([]);
       "Authorization": `Bearer ${token}`
     }})
       console.log(result)
-      redirect("/dashboard")
+      window.location.href = "/my/applications"
     } catch (err: any) {
         console.log(err)
         setAlertTitle(err?.response?.data?.message || "Something went wrong.")
