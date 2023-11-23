@@ -43,11 +43,15 @@ export default function Page({ params }: { params: { slug: string } }) {
             })
             console.log("company:", companyResult.data.company);
             setCompany(companyResult.data.company);
+
+            await getPostings(params.slug)
+
             setIsLoading(false);
         } catch (err) {
             console.log(err)
     
         }
+
     }
 
     async function getPostings(companyID: String) {
@@ -74,7 +78,6 @@ export default function Page({ params }: { params: { slug: string } }) {
     useEffect(() => {
         Promise.all([
             getCompany(params.slug),
-            getPostings(params.slug)
         ])
     }, [params.slug])
     
