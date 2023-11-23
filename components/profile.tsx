@@ -99,11 +99,11 @@ export function ProfileForm() {
       "Authorization": `Bearer ${token}`
     }})
       console.log(result)
-      redirect("/dashboard")
+      window.location.href = "/dashboard"
     } catch (err: any) {
         console.log(err)
         setAlertTitle(err?.response?.message || "Something went wrong.")
-        setAlertDescription(err?.response?.description || "That's all we know.")
+        setAlertDescription(err?.response?.description || err?.response?.error || "That's all we know.")
         setAlertVisible(true)
     }
     setIsLoading(false);

@@ -220,6 +220,9 @@ export default function Page({ params }: { params: { slug: string } }) {
                 Website
             </Button>
             </Link>
+            <Link href={`/my/company/${company?._id}/edit`}> <Button variant="secondary" className="mt-2"> 
+        <Pencil className="w-4 h-4 mr-2"></Pencil> 
+        Edit </Button> </Link>
         </div>
         <div className='mt-4'>
             <div className="space-y-2">

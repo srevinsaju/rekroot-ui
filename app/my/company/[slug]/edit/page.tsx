@@ -1,4 +1,5 @@
-import { ProfileForm } from "@/components/profile";
+import { CompanyEdit } from "@/components/company-edit";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +22,7 @@ export default function Page({ params }: { params: { slug: string } }) {
         <h1 className="text-4xl font-bold">Edit Company details</h1>
 
         <div className="py-4">
-            <ProfileForm />
+            <CompanyEdit company={params.slug} />
         </div>
     </div>
 
