@@ -10,7 +10,7 @@ import axios from "axios";
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 
-function Event({ key, name, company, position, timestamp, c} : {key: string, name: string, company: string, position: string, timestamp: number, c: string}) {
+function Event({ke, name, company, position, timestamp, c} : {ke: string, name: string, company: string, position: string, timestamp: number, c: string}) {
     return <div className="flex ">
     <Avatar className="h-9 w-9">
       <AvatarImage src={`https://avatar.vercel.sh/${name}?size=30`} alt="Avatar" />
@@ -23,7 +23,7 @@ function Event({ key, name, company, position, timestamp, c} : {key: string, nam
       </p>
       <p className="text-xs">{moment.unix(timestamp).fromNow()}</p>
       <div>
-      <Button size="sm" className="mt-2 mr-2">Apply</Button>
+      <Link href={`/company/${c}/postings/${ke}/apply`}> <Button className="mt-2 mr-2"> Apply </Button> </Link>
       <Link href={`/company/${c}`}>
             <Button size="sm" variant="outline"  className="mt-2 mr-2"> View</Button>
             </Link>
@@ -69,7 +69,7 @@ function Posting({ name, company, position, timestamp} : { name: string, company
 
 //     people.forEach( (v, i) => {
 //         happenings.push(
-//             <Event key={v.name} name={v.name} company={v.company} position={v.position} timestamp={v.timestamp}></Event>
+//             <Event ke={v.name} name={v.name} company={v.company} position={v.position} timestamp={v.timestamp}></Event>
 //         )
 //     })
 
@@ -82,7 +82,7 @@ function Posting({ name, company, position, timestamp} : { name: string, company
 //         const jobPost = response.data.jobPosts;
   
 //         happenings.push(
-//           <Event key={"{names}"} name={"{names}"} company={"{names}"} position={"{names}"} timestamp= {1699212105} ></Event>
+//           <Event ke={"{names}"} name={"{names}"} company={"{names}"} position={"{names}"} timestamp= {1699212105} ></Event>
 //         ); //why its not working inside fetchJobPosts but its working outsidee it
 //         console.log("Done dona done");
 //       } catch (err:any) {
@@ -125,6 +125,7 @@ export function RecentApplications() {
         const elements = jobPosts.map((post:any) => (
           <Event
             key={post._id}
+            ke={post._id}
             c = {post.company._id}
             name={post.createdBy.fullName}
             company={post.company.companyName}
