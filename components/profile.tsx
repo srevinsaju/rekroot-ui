@@ -37,7 +37,7 @@ const formSchema = z.object({
   }),
   username: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(4, { message: "Password must be atleast 8 characters" }),
-  phoneNumber: z.string().min(8, { message: "Invalid phone number, expecting atleast 8 characters"}),
+  phoneNumber: z.string().min(6, { message: "Invalid phone number, expecting atleast 8 characters"}),
   address: z.string(),
   linkedin: z.string(),
 })
@@ -93,7 +93,7 @@ export function ProfileForm() {
         phoneNo: values.phoneNumber,
         location: values.address,
         linkedin: values.linkedin,
-        fullName: values.username,
+        fullName: values.fullname,
         designation: "",
     }, { headers: {
       "Authorization": `Bearer ${token}`
