@@ -299,7 +299,7 @@ export default function Page({ params }: { params: { slug: string, posting: stri
         <h3 className='text-lg font-bold mt-2'>Skills</h3>
         {applicationData?.skills?.length == 0 && <p className='text-gray-500'>No skills provided.</p>}
         {applicationData?.skills?.map((skill: any) => {
-            return <Badge className='mt-2' color="blue">{skill}</Badge>
+            return <Badge key={skill} className='mt-2' color="blue">{skill}</Badge>
         })}
         
         <h3 className='text-lg font-bold mt-2'>References</h3>
@@ -311,7 +311,7 @@ export default function Page({ params }: { params: { slug: string, posting: stri
         <div className="mt-4">
         <h2 className='text-lg font-bold'>Work Experience</h2>
         {applicationData?.workExperience?.map((workExperience: any) => {
-            return <div className='mt-4'>
+            return <div key={workExperience} className='mt-4'>
                 <p className=''>{workExperience.company}</p>
                 <p className=''>{workExperience.position}</p>
                 <p className=''>{workExperience.startDate}</p>
@@ -325,7 +325,7 @@ export default function Page({ params }: { params: { slug: string, posting: stri
         <div className="mt-4">
         <h2 className='text-lg font-bold'>Education</h2>
         {applicationData?.education?.map((education: any) => {
-            return <div className='mt-4'>
+            return <div key={education} className='mt-4'>
                 <p className='font-bold text-lg'>{education.degree}</p>
                 <p className=''>{education.institution}</p>
                 <p className=''>Graduation: {moment(education.graduationDate).fromNow()}</p>
