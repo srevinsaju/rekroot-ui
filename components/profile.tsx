@@ -54,6 +54,9 @@ export function ProfileForm() {
     defaultValues: async () => {
       let email = "loading..."
       let name = "Loading..."
+      let phoneNumber = "Loading..."
+      let linkedin = "Loading..."
+      let address = "Loading..."
       let url = process.env.NEXT_PUBLIC_BACKEND_URL
       let token = window.sessionStorage.getItem("token")
       try {
@@ -64,6 +67,9 @@ export function ProfileForm() {
         })
         email = result.data.email
         name = result.data.fullName || result.data.email.split("@")[0]
+        phoneNumber = result.data.phoneNo || ""
+        linkedin = result.data.linkedin || ""
+        address = result.data.location || ""
         console.log(result)
       } catch (err: any) {
           console.log(err)
@@ -72,9 +78,9 @@ export function ProfileForm() {
         fullname: name,
         username: email,
         password: "",
-        linkedin: "",
-        address: "",
-        phoneNumber: "",
+        linkedin: linkedin,
+        address: address,
+        phoneNumber: phoneNumber,
       }
     }
   })
