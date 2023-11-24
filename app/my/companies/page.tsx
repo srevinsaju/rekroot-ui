@@ -70,11 +70,15 @@ export default function Companies() {
 
 
 
+
     function CompanyList() {
         let companyComponents: React.ReactNode[] = [];
+        console.log("companies:", companies);
 
         companies.every((company) => {
-            companyComponents.push(<Company prefix="/my" company={company} showEdit={true} showView={true} showCreatePosting={true}/>)
+            console.log("checking company:", company)
+            companyComponents.push(<Company prefix=""  key={company._id} company={company} showCreatePosting={true} showView={true} showEdit={true}/>)
+            return true;
         })
         return <>
             {companyComponents}

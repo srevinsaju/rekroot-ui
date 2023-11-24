@@ -46,8 +46,13 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: "Description should contain atleast 10 characters."
   }),
+
   salary_range: z.string(),
-  custom_questions: z.map(z.string().min(5, { message: "question key must contain atleast 5 characters" }), z.string(), {}).optional()
+  customQuestions: z.object({
+    question1: z.string().optional(),
+    question2: z.string().optional(),
+    question3: z.string().optional(),
+  }).optional(),
 })
  
 function getCountries(lang = 'en') {
@@ -76,7 +81,18 @@ const [alertDescription, setAlertDescription] = React.useState("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-    
+      customQuestions: {
+        question1: "Test Question 1",
+        question2: "Test Question 2",
+        question3: "Test Question 3",
+      },
+      job_title: "",
+      location_state: "",
+      location_country: "",
+      job_location: "",
+      job_type: "",
+      description: "",
+      salary_range: "",
     },
   })
  
@@ -101,6 +117,7 @@ const [alertDescription, setAlertDescription] = React.useState("");
         },
         job_type: values.job_location,
         salary_range: values.salary_range,
+        customQuestions: values.customQuestions,
       }, {
         headers: {
           "Authorization": `Bearer ${window.sessionStorage.getItem("token")}`

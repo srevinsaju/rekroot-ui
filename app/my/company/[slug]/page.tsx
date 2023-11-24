@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios"
-import { Eye, Globe, Mail, Pencil, Share } from "lucide-react";
+import { Eye, Globe, Mail, Pencil, Share, Trash } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect } from "react"
 
@@ -169,6 +169,24 @@ export default function Page({ params }: { params: { slug: string } }) {
             return <PostingsLoadingSkeleton/>
         }
 
+        async function deletePosting() {
+            let url = process.env.NEXT_PUBLIC_BACKEND_URL
+            let token = window.sessionStorage.getItem("token")
+            try {
+                let companyResult = await axios.delete(`${url}/company/${company._id}/posting/${p}`, { 
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                console.log("job postings:", companyResult.data);
+                setPosting(companyResult.data.jobPosting);
+                setIsPostingLoading(false);
+            } catch (err) {
+                console.log(err)
+        
+            }
+        }
+
         return <div className='flex gap-4'>
         <div className=' spacy-y-2 '>
         <h1 className='text-xl font-bold'>{posting.job_title}</h1>
@@ -180,6 +198,11 @@ export default function Page({ params }: { params: { slug: string } }) {
         <Link href={`/my/company/${company._id}/postings/${posting._id}/edit`}> <Button variant="secondary" className="mt-2"> 
         <Pencil className="w-4 h-4 mr-2"></Pencil> 
         Edit </Button> </Link>
+
+        <Button onClick={deletePosting} variant="destructive" className="mt-2">
+                <Trash className="mr-2 w-4 h-4"></Trash>
+                Delete
+            </Button>
         </div>
         </div>
     }
@@ -223,6 +246,7 @@ export default function Page({ params }: { params: { slug: string } }) {
             <Link href={`/my/company/${company?._id}/edit`}> <Button variant="secondary" className="mt-2"> 
         <Pencil className="w-4 h-4 mr-2"></Pencil> 
         Edit </Button> </Link>
+
         </div>
         <div className='mt-4'>
             <div className="space-y-2">
