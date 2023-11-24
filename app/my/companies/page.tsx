@@ -77,7 +77,7 @@ export default function Companies() {
 
         companies.every((company) => {
             console.log("checking company:", company)
-            companyComponents.push(<Company prefix=""  key={company._id} company={company} showCreatePosting={true} showView={true} showEdit={true}/>)
+            companyComponents.push(<Company prefix="/my"  key={company._id} company={company} showCreatePosting={true} showView={true} showEdit={true}/>)
             return true;
         })
         return <>
