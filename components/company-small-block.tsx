@@ -43,7 +43,7 @@ export function Company(
                 }
             })
             console.log("company deleted:", companyResult)
-            // window.location.href = "/my/companies"
+            window.location.href = "/my/companies"
         } catch (err) {
             console.log(err)
     
