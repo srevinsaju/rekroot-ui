@@ -181,8 +181,12 @@ export default function Page({ params }: { params: { slug: string } }) {
                 console.log("job postings:", companyResult.data);
                 setPosting(companyResult.data.jobPosting);
                 setIsPostingLoading(false);
-            } catch (err) {
+                window.location.href = `/my/company/${company._id}`
+            } catch (err: any) {
                 console.log(err)
+                setAlertTitle(err?.response?.data?.message || "Something went wrong.")
+                setAlertDescription(err?.response?.data?.description || err?.response?.data?.error || "That's all we know.")
+                setAlertVisible(true)
         
             }
         }

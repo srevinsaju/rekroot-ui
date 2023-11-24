@@ -124,7 +124,7 @@ const [alertDescription, setAlertDescription] = React.useState("");
         }
       })
       console.log(result)
-      window.location.href = "my/company/" + company._id
+      window.location.href = "/my/company/" + company._id
     } catch (err: any) {
         console.log(err)
         setAlertTitle(err?.response?.data?.message || "Something went wrong.")

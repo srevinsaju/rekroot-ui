@@ -1,4 +1,4 @@
-import { Edit, Eye, Plus } from "lucide-react";
+import { Edit, Eye, Plus, Trash } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import React, { useEffect } from "react";
@@ -29,9 +29,26 @@ function EditCompany({prefix, c, showEdit = false}: {prefix: string, c: any, sho
 
 
 export function Company(
-    {company, showEdit = false, showView = false, showCreatePosting = false, prefix = ""}: 
-    {company: any, showEdit: boolean, showView: boolean, showCreatePosting: boolean, prefix: string }) 
+    {company, showEdit = false, showView = false, showCreatePosting = false, prefix = "", showDelete = false}: 
+    {company: any, showEdit: boolean, showView: boolean, showCreatePosting: boolean, prefix: string, showDelete: boolean }) 
 {
+
+    async function companyDelete() {
+        let url = process.env.NEXT_PUBLIC_BACKEND_URL
+        let token = window.sessionStorage.getItem("token")
+        try {
+            let companyResult = await axios.delete(`${url}/company/${company._id}`, { 
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+            console.log("company deleted:", companyResult)
+            // window.location.href = "/my/companies"
+        } catch (err) {
+            console.log(err)
+    
+        }
+    }
     console.log("received company:", company.company)
     let c = company;
     return <div className='flex gap-4 mt-4'>
@@ -52,6 +69,7 @@ export function Company(
             {showCreatePosting && <Link href={`${prefix}/company/${c._id}/postings/new`}>
                 <Button variant="secondary" className="mt-2"><Plus className="w-4 h-4 mr-2"></Plus> Create Application</Button>
             </Link> }
+            {showDelete && <Button onClick={companyDelete} variant="destructive" className="mt-2"><Trash className="w-4 h-4 mr-2"></Trash> Delete</Button>} 
 
             </div>
         </div>
